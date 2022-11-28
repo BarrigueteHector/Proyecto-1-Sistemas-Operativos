@@ -71,6 +71,10 @@ def mesa(id):
                 tipo = random.randrange(0, 4)
                 numero = random.randrange(1, 11)
 
+                #COMPROBANDO
+                print(id != id_crupier and int(puntaje[id]) < 22 and pedir_carta)
+                print(id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier)
+                    
                 if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
                     if(tipo == 0):
                         carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
@@ -83,6 +87,9 @@ def mesa(id):
 
                 time.sleep(2)
 
+                #COMPROBANDO
+                print(id != id_crupier)
+
                 if id != id_crupier:
                     if int(puntaje[id]) < 22 and pedir_carta:
                         #print("Repartiendo cartas al jugador", id, "\n")
@@ -92,8 +99,8 @@ def mesa(id):
                         
                         if (int(puntaje[id]) == 21):
                             pedir_carta = False
-                        elif(int(puntaje[id]) > 21):
-                            break
+                        #elif(int(puntaje[id]) > 21):
+                        #    break
                         else:
                             print("JUGADOR #" + str(id) + " Puntaje actual:", puntaje[id], "\n")
                             
