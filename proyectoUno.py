@@ -24,6 +24,7 @@ puntaje = [0, 0, 0, 0, 0]
 puntaje_crupier = 0
 dinero = [0, 0, 0, 0]
 apuesta = [0, 0, 0, 0, 0]
+lista_plantados = ['S', 'S', 'S', 'S', 'S'] # S -> sigue, P -> plantado
 
 tipo = 0
 numero = 0
@@ -35,6 +36,8 @@ carta_repetida = False
 
 diferencia = 0
 decision = 0
+
+contador_plantados = 0
 
 def jugador(id):
     mutex.acquire()
@@ -52,7 +55,7 @@ def crupier():
     mesa(id_crupier)
 
 def mesa(id):
-    global cuenta, puntaje, puntaje_crupier, dinero, apuesta
+    global cuenta, puntaje, puntaje_crupier, dinero, apuesta, lista_plantados, contador_plantados
     puntaje[id] = 0
     apuesta[id] = 0
     pedir_carta = True
@@ -64,73 +67,100 @@ def mesa(id):
         #print(lista_turnos)
         #time.sleep(10)
 
-        for turno in lista_turnos:
-            if turno == id:
-                mutex.acquire()
+        for plantado in lista_plantados:
+            #print(lista_plantados, "\n")
+            if plantado == 'P':
+                contador_plantados += 1
+                #lista_plantados.remove('P')
+        
+        if contador_plantados != 5:
+            for turno in lista_turnos:
+                if turno == id and lista_plantados[id] == 'S':
+                    mutex.acquire()
 
-                tipo = random.randrange(0, 4)
-                numero = random.randrange(1, 11)
+                    tipo = random.randrange(0, 4)
+                    numero = random.randrange(1, 11)
 
-                #COMPROBANDO
-                print(id != id_crupier and int(puntaje[id]) < 22 and pedir_carta)
-                print(id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier)
-                    
-                if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
-                    if(tipo == 0):
-                        carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
-                    elif(tipo == 1):
-                        carta_repetida = repartiendo(numero, cartas_diamante, "DIAMANTES")
-                    elif(tipo == 2):
-                        carta_repetida = repartiendo(numero, cartas_trebol, "TREBOLES")
-                    elif(tipo == 3):
-                        carta_repetida = repartiendo(numero, cartas_pica, "PICAS")
-
-                time.sleep(2)
-
-                #COMPROBANDO
-                print(id != id_crupier)
-
-                if id != id_crupier:
-                    if int(puntaje[id]) < 22 and pedir_carta:
-                        #print("Repartiendo cartas al jugador", id, "\n")
-
-                        if carta_repetida == False: #Si la carta no ha sido repetida
-                            puntaje[id] += numero
+                    #COMPROBANDO
+                    #print(id != id_crupier and int(puntaje[id]) < 22 and pedir_carta)
+                    #print(id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier)
                         
-                        if (int(puntaje[id]) == 21):
-                            pedir_carta = False
-                        #elif(int(puntaje[id]) > 21):
-                        #    break
-                        else:
-                            print("JUGADOR #" + str(id) + " Puntaje actual:", puntaje[id], "\n")
+                    if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
+                        if(tipo == 0):
+                            carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
+                        elif(tipo == 1):
+                            carta_repetida = repartiendo(numero, cartas_diamante, "DIAMANTES")
+                        elif(tipo == 2):
+                            carta_repetida = repartiendo(numero, cartas_trebol, "TREBOLES")
+                        elif(tipo == 3):
+                            carta_repetida = repartiendo(numero, cartas_pica, "PICAS")
+
+                    time.sleep(1)
+
+                    #COMPROBANDO
+                    #print(id != id_crupier)
+
+                    if id != id_crupier:
+                        if int(puntaje[id]) < 22 and pedir_carta:
+                            #print("Repartiendo cartas al jugador", id, "\n")
+
+                            if carta_repetida == False: #Si la carta no ha sido repetida
+                                puntaje[id] += numero
                             
-                            if int(puntaje[id]) >= 11: #Puntaje mayor/igual a 11
-                                pedir_carta = probabilidad(int(puntaje[id])) #¿Se pide otra carta?
+                            if (int(puntaje[id]) == 21):
+                                pedir_carta = False
                                 
+                            #elif(int(puntaje[id]) > 21):
+                            #    break
+                            else:
+                                print("JUGADOR #" + str(id) + " Puntaje actual:", puntaje[id], "\n")
+                                
+                                if int(puntaje[id]) >= 11: #Puntaje mayor/igual a 11
+                                    pedir_carta = probabilidad(int(puntaje[id])) #¿Se pide otra carta?
+
+                            if pedir_carta == False or int(puntaje[id]) > 21:
+                                lista_plantados[id] = 'P'
+
+                        else:
+                            print("-> JUGADOR #" + str(id) + " Puntaje final:", puntaje[id], "\n")
+
                     else:
-                        print("-> JUGADOR #" + str(id) + " Puntaje final:", puntaje[id], "\n")
+                        #print("Repartiendo cartas al crupier\n")
 
-                else:
-                    #print("Repartiendo cartas al crupier\n")
+                        if int(puntaje_crupier) < 22 and pedir_carta_crupier: 
+                            if carta_repetida == False:
+                                puntaje_crupier += numero
 
-                    if int(puntaje_crupier) < 22 and pedir_carta_crupier: 
-                        if carta_repetida == False:
-                            puntaje_crupier += numero
-
-                        if puntaje_crupier >= 17:
-                            pedir_carta_crupier = False
+                            if puntaje_crupier >= 17:
+                                pedir_carta_crupier = False
+                            
+                            print("Crupier Puntaje actual:", puntaje_crupier, "\n")        
+                        else:
+                            print("-> Crupier Puntaje final:", puntaje_crupier, "\n")
                         
-                        print("Crupier Puntaje actual:", puntaje_crupier, "\n")        
-                    else:
-                        print("-> Crupier Puntaje final:", puntaje_crupier, "\n")
+                        if pedir_carta_crupier == False or int(puntaje_crupier) > 21:
+                            lista_plantados.insert(id_crupier, 'P')
+                            lista_plantados[id_crupier] = 'P'
 
-                mutex.release()
+                    mutex.release()
 
-                time.sleep(2)
-            else:
-                #print("Esperando\n")
-                time.sleep(5) #Antes 10
-    
+                    time.sleep(1)
+                
+                else:
+                    #print("Esperando\n")
+                    time.sleep(4) #Antes 10
+        else:
+            if id != 4:
+                if puntaje[id] < 22 and (puntaje[id] > puntaje_crupier or (puntaje_crupier > 22 and puntaje[id] < puntaje_crupier)):
+                    print("Jugador #" + str(id) + " le ganó al Crupier\n")
+                elif (puntaje[id] < puntaje_crupier or puntaje[id] > 22) and puntaje_crupier < 22:
+                    print("El Crupier le ganó al Jugador #" + str(id) + "\n")
+                else:
+                    print("Entre el Jugador #" + str(id) + " y el Crupier, nadie gana\n")
+
+            break
+        contador_plantados = 0    
+        
 def repartiendo(valor, lista_carta, str_carta):
     if (valor in lista_carta):
         lista_carta.remove(valor)
