@@ -41,7 +41,7 @@ def jugador(id):
     lista_turnos.append(id)
 
     if len(lista_turnos) == 4:
-        lista_turnos.append(5)
+        lista_turnos.append(id_crupier)
 
     #print("Jugador", id, "\n")
     mutex.release()
@@ -61,6 +61,9 @@ def mesa(id):
 
     time.sleep(5)
     while True:
+        #print(lista_turnos)
+        #time.sleep(10)
+
         for turno in lista_turnos:
             if turno == id:
                 mutex.acquire()
@@ -100,23 +103,9 @@ def mesa(id):
                         print("-> JUGADOR #" + str(id) + " Puntaje final:", puntaje[id], "\n")
 
                 else:
-                    print("Repartiendo cartas al crupier\n")
+                    #print("Repartiendo cartas al crupier\n")
 
                     if int(puntaje_crupier) < 22 and pedir_carta_crupier: 
-                        tipo = random.randrange(0, 4)
-                        numero = random.randrange(1, 11)
-
-                        time.sleep(2)
-
-                        if(tipo == 0):
-                            carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
-                        elif(tipo == 1):
-                            carta_repetida = repartiendo(numero, cartas_diamante, "DIAMANTES")
-                        elif(tipo == 2):
-                            carta_repetida = repartiendo(numero, cartas_trebol, "TREBOLES")
-                        elif(tipo == 3):
-                            carta_repetida = repartiendo(numero, cartas_pica, "PICAS")
-
                         if carta_repetida == False:
                             puntaje_crupier += numero
 
@@ -124,8 +113,8 @@ def mesa(id):
                             pedir_carta_crupier = False
                         
                         print("Crupier Puntaje actual:", puntaje_crupier, "\n")        
-                                
-                    print("-> Crupier Puntaje final:", puntaje_crupier, "\n")
+                    else:
+                        print("-> Crupier Puntaje final:", puntaje_crupier, "\n")
 
                 mutex.release()
 
@@ -137,7 +126,7 @@ def mesa(id):
 def repartiendo(valor, lista_carta, str_carta):
     if (valor in lista_carta):
         lista_carta.remove(valor)
-        print(valor, "DE", str_carta, "\n")
+        print(valor, "DE", str_carta)
         return False
     else:
         #print("La carta", valor, "de", str_carta, "ya fue repartida\n")
