@@ -31,7 +31,7 @@ numero = 0
 pedir_carta = True
 pedir_carta_crupier = True
 
-carta_repartida = False
+carta_repetida = False
 
 diferencia = 0
 decision = 0
@@ -57,7 +57,7 @@ def mesa(id):
     apuesta[id] = 0
     pedir_carta = True
     pedir_carta_crupier = True
-    carta_repartida = False
+    carta_repetida = False
 
     time.sleep(5)
     while True:
@@ -71,14 +71,15 @@ def mesa(id):
                 tipo = random.randrange(0, 4)
                 numero = random.randrange(1, 11)
 
-                if(tipo == 0):
-                    carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
-                elif(tipo == 1):
-                    carta_repetida = repartiendo(numero, cartas_diamante, "DIAMANTES")
-                elif(tipo == 2):
-                    carta_repetida = repartiendo(numero, cartas_trebol, "TREBOLES")
-                elif(tipo == 3):
-                    carta_repetida = repartiendo(numero, cartas_pica, "PICAS")
+                if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
+                    if(tipo == 0):
+                        carta_repetida = repartiendo(numero, cartas_corazon, "CORAZONES")
+                    elif(tipo == 1):
+                        carta_repetida = repartiendo(numero, cartas_diamante, "DIAMANTES")
+                    elif(tipo == 2):
+                        carta_repetida = repartiendo(numero, cartas_trebol, "TREBOLES")
+                    elif(tipo == 3):
+                        carta_repetida = repartiendo(numero, cartas_pica, "PICAS")
 
                 time.sleep(2)
 
