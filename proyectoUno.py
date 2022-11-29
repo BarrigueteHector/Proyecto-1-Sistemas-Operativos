@@ -65,15 +65,10 @@ def mesa(id):
 
     time.sleep(5)
     while True:
-        #print(lista_turnos)
-        #time.sleep(10)
-
         for plantado in lista_plantados: #Verifica si todos los jugadores se plantaron
-            #print(lista_plantados, "\n")
             if plantado == 'P':
                 contador_plantados += 1
-                #lista_plantados.remove('P')
-        
+            
         if contador_plantados != 5: #Si no se plantaron todos los jugadores
             for turno in lista_turnos: #Verifica el turno del jugador
                 if turno == id and lista_plantados[id] == 'S': #Si es el turno del jugador y no se plantó
@@ -83,10 +78,6 @@ def mesa(id):
                     tipo = random.randrange(0, 4)
                     numero = random.randrange(1, 11)
 
-                    #COMPROBANDO
-                    #print(id != id_crupier and int(puntaje[id]) < 22 and pedir_carta)
-                    #print(id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier)
-                        
                     if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
                         # Si el ID es el de un jugador, su puntaje es menor a 22 y pide carta, o si el ID es el del Crupier, su puntaje es menor a 22 y pide carta
 
@@ -101,9 +92,6 @@ def mesa(id):
 
                     time.sleep(1)
 
-                    #COMPROBANDO
-                    #print(id != id_crupier)
-
                     if id != id_crupier: #Si el ID es el de un jugador
                         if int(puntaje[id]) < 22 and pedir_carta: #Si el puntaje es menor a 22 y pide carta
                             #print("Repartiendo cartas al jugador", id, "\n")
@@ -112,10 +100,7 @@ def mesa(id):
                                 puntaje[id] += numero
                             
                             if (int(puntaje[id]) == 21): #Si el puntaje es 21, se planta
-                                pedir_carta = False
-                                
-                            #elif(int(puntaje[id]) > 21):
-                            #    break
+                                pedir_carta = False    
                             else:
                                 print("JUGADOR #" + str(id) + " Puntaje actual:", puntaje[id], "\n")
                                 
@@ -129,8 +114,6 @@ def mesa(id):
                             print("-> JUGADOR #" + str(id) + " Puntaje final:", puntaje[id], "\n")
 
                     else: #Si el ID es el del Crupier
-                        #print("Repartiendo cartas al crupier\n")
-
                         if int(puntaje_crupier) < 22 and pedir_carta_crupier: #Si el puntaje es menor a 22 y pide carta
                             if carta_repetida == False: #Si la carta no ha sido repetida (jugada 2 veces) se le suma al puntaje del Crupier
                                 puntaje_crupier += numero
@@ -150,7 +133,6 @@ def mesa(id):
                     time.sleep(1)
                 
                 else:
-                    #print("Esperando\n")
                     time.sleep(4) #Espera 4 segundos para volver a verificar el turno del jugador
         else:
             if id != 4: #Si el ID es el de un jugador
@@ -171,7 +153,6 @@ def repartiendo(valor, lista_carta, str_carta):
         print(valor, "DE", str_carta)
         return False
     else:
-        #print("La carta", valor, "de", str_carta, "ya fue repartida\n")
         return True
         
 def probabilidad(puntaje):
@@ -193,13 +174,5 @@ def main():
     time.sleep(1)
 
     threading.Thread(target=crupier).start()
-    
-    # ****************** IDEA BASE PARA EL SISTEMA POR TURNOS ******************
-    #turnos_lista = [1,2,3,4]
-    #for turno in turnos_lista:
-    #    if turno == 2:
-    #        print("Iguales\n")
-    #    else:
-    #        print("Diferentes")
 
 main()
