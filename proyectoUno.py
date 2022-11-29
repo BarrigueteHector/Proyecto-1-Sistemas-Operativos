@@ -39,23 +39,30 @@ personas_mesa = 4 #Cantidad de personas en la mesa
 lista_turnos = [] #Lista de turnos
 id_crupier = 4 
 
-
 def jugador(id):
+    global dinero, apuesta
+    dinero[id] = 0
+    apuesta[id] = 0
+
     mutex.acquire()
     lista_turnos.append(id)
 
     if len(lista_turnos) == 4:
         lista_turnos.append(id_crupier)
 
-    #print("Jugador", id, "\n")
+    dinero[id] = random.randrange(4, 12) * 100 #Se genera un número aleatorio entre 4 y 11 y se multiplica por 100 para el dinero
+    print("Dinero del Jugador #" + str(id) + " $" + str(dinero[id]))
+
+    apuesta[id] = random.randrange(1, 4) * 100 #Se genera un número aleatorio entre 1 y 3 para la apuesta
+    print("Apuesta del Jugador #" + str(id) + " $" + str(apuesta[id]) + "\n")
+
     mutex.release()
-    mesa(id)
+    mesa(id, dinero[id], apuesta[id])
 
 def crupier():
-    #print("Crupier\n")
-    mesa(id_crupier)
+    mesa(id_crupier, 0, 0)
 
-def mesa(id):
+def mesa(id, dinero_jugador, apuesta_jugador):
     global puntaje, puntaje_crupier, dinero, apuesta, lista_plantados, contador_plantados
     puntaje[id] = 0
     apuesta[id] = 0
@@ -131,22 +138,23 @@ def mesa(id):
                     mutex.release()
 
                     time.sleep(1)
-                
                 else:
                     time.sleep(4) #Espera 4 segundos para volver a verificar el turno del jugador
         else:
             if id != 4: #Si el ID es el de un jugador
                 #Se hacen comprobaciones para saber si el jugador gana, pierde o empata con el Crupier
-                if puntaje[id] < 22 and (puntaje[id] > puntaje_crupier or (puntaje_crupier > 22 and puntaje[id] < puntaje_crupier)):
-                    print("Jugador #" + str(id) + " le ganó al Crupier\n")
-                elif (puntaje[id] < puntaje_crupier or puntaje[id] > 22) and puntaje_crupier < 22:
-                    print("El Crupier le ganó al Jugador #" + str(id) + "\n")
+                if puntaje[id] < 22 and (puntaje[id] > puntaje_crupier or (puntaje_crupier > 21 and puntaje[id] < puntaje_crupier)):
+                    dinero_jugador += apuesta_jugador * 2
+                    print("-> Jugador #" + str(id) + " (" + str(puntaje[id]) + ") le ganó al Crupier (" +  str(puntaje_crupier) +")\nDinero actual del jugador: $" + str(dinero_jugador) + "\n")
+                elif (puntaje[id] < puntaje_crupier or puntaje[id] > 21) and puntaje_crupier < 22:
+                    dinero_jugador -= apuesta_jugador
+                    print("-> El Crupier (" + str(puntaje_crupier) +") le ganó al Jugador #" + str(id) + " (" + str(puntaje[id]) + ")\nDinero actual del jugador: $" + str(dinero_jugador) + "\n")                    
                 else:
-                    print("Entre el Jugador #" + str(id) + " y el Crupier, nadie gana\n")
+                    print("-> Entre el Jugador #" + str(id) + " (" + str(puntaje[id]) +") y el Crupier (" + str(puntaje_crupier) +"), nadie gana\n")
 
             break #Se sale del ciclo infinito al llegar al ID del Crupier
         contador_plantados = 0 #Se reinicia el contador de plantados
-        
+
 def repartiendo(valor, lista_carta, str_carta):
     if (valor in lista_carta): #Si la carta está en la lista de cartas
         lista_carta.remove(valor) #Se elimina de la lista de cartas
