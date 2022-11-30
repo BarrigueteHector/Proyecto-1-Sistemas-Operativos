@@ -19,8 +19,8 @@ puntaje = [0, 0, 0, 0, 0] #Puntajes de cada jugador, el último no se utiliza, s
 puntaje_crupier = 0
 
 dinero = [0, 0, 0, 0]
-apuesta = [0, 0, 0, 0, 0] #Apuestas de cada jugador, el último no se utiliza, solo es para evitar error
-lista_plantados = ['S', 'S', 'S', 'S', 'S'] # S -> sigue, P -> plantado
+apuesta = [000, 0, 0, 0, 0] #Apuestas de cada jugador, el último no se utiliza, solo es para evitar error
+lista_plantados = ['S', 'S', 'S', 'S', 'S'] # S -> sigue, P -> plantado , el ultimo corresponde al Crupier
 
 tipo = 0 #Tipo de carta, 0 -> Corazón, 1 -> Diamante, 2 -> Trebol, 3 -> Pica
 numero = 0 #Numero/valor de cada carta
@@ -35,7 +35,7 @@ decision = 0 #Decision aleatoria para saber si el jugador pide otra carta o se p
 
 contador_plantados = 0 #Contador para saber cuantos jugadores se plantaron, incluye el Crupier
 
-personas_mesa = 4 #Cantidad de personas en la mesa
+personas_mesa = 4 
 lista_turnos = [] #Lista de turnos
 id_crupier = 4 
 
@@ -47,13 +47,13 @@ def jugador(id):
     mutex.acquire()
     lista_turnos.append(id)
 
-    if len(lista_turnos) == 4:
+    if len(lista_turnos) == 4: #Cuando todos los jugadores ya estén en la lista se agrega al crupier
         lista_turnos.append(id_crupier)
 
-    dinero[id] = random.randrange(4, 12) * 100 #Se genera un número aleatorio entre 4 y 11 y se multiplica por 100 para el dinero
+    dinero[id] = random.randrange(4, 12) * 100 
     print("Dinero del Jugador #" + str(id) + " $" + str(dinero[id]))
 
-    apuesta[id] = random.randrange(1, 4) * 100 #Se genera un número aleatorio entre 1 y 3 para la apuesta
+    apuesta[id] = random.randrange(1, 4) * 100 
     print("Apuesta del Jugador #" + str(id) + " $" + str(apuesta[id]) + "\n")
 
     mutex.release()
@@ -81,8 +81,8 @@ def mesa(id, dinero_jugador, apuesta_jugador):
                 if turno == id and lista_plantados[id] == 'S': #Si es el turno del jugador y no se plantó
                     mutex.acquire()
 
-                    #Se le reparte una carta
-                    tipo = random.randrange(0, 4)
+                    #Se reparte una carta
+                    tipo = random.randrange(0, 4) # 0 -> Corazón, 1 -> Diamante, 2 -> Trebol, 3 -> Pica
                     numero = random.randrange(1, 11)
 
                     if (id != id_crupier and int(puntaje[id]) < 22 and pedir_carta) or (id == id_crupier and int(puntaje_crupier) < 22 and pedir_carta_crupier):
