@@ -1,3 +1,5 @@
+#CODIGO REALIZADO POR: BARRIGUETE RODRÑIGUEZ HÉCTOR ALEJANDRO 
+
 import threading
 import time
 import random
